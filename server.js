@@ -6,8 +6,8 @@ No part of this assignment has been copied manually or electronically from any o
 Name: Eric Yakimoff
 Student ID: 165296237
 Date: 1/11/2024
-Vercel Web App URL: 
-GitHub Repository URL: 
+Vercel Web App URL: https://web322-efadmptwz-eyakimoffs-projects.vercel.app/
+GitHub Repository URL: https://github.com/eyakimoff/web322-app
 
 ********************************************************************************/
 
@@ -18,7 +18,7 @@ const express = require("express");
 const path = require("path");
 const storeService = require("./store-service");
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;
 
 // Configure Cloudinary (add your credentials here)
 cloudinary.config({
@@ -31,8 +31,11 @@ cloudinary.config({
 // Initialize multer without disk storage
 const upload = multer();
 
+// Set the views directory for Express
+app.set("views", path.join(__dirname, "views"));
+
 // Serve static files from the "public" folder
-app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "public")));
 
 // Redirect root URL to the About page
 app.get("/", (req, res) => {
