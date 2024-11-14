@@ -26,6 +26,7 @@ module.exports = {
             });
         });
     },
+
     getAllItems() {
         return new Promise((resolve, reject) => {
             if (items.length > 0) {
@@ -43,10 +44,11 @@ module.exports = {
             if (publishedItems.length > 0) {
                 resolve(publishedItems);
             } else {
-                reject("no results returned");
+                reject("No published items found.");
             }
         });
     },
+
     getCategories() {
         return new Promise((resolve, reject) => {
             if (categories.length > 0) {
@@ -98,7 +100,6 @@ module.exports = {
         });
     },
 
-    // New addItem function
     addItem(itemData) {
         return new Promise((resolve, reject) => {
             // Set published to false if undefined, otherwise set to true
@@ -106,6 +107,11 @@ module.exports = {
 
             // Assign a new unique id based on the length of the items array
             itemData.id = items.length + 1;
+
+            // Add the current date as itemDate (formatted as YYYY-MM-DD)
+            const currentDate = new Date();
+            const itemDate = currentDate.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+            itemData.itemDate = itemDate;
 
             // Add the new item to the items array
             items.push(itemData);
@@ -122,6 +128,20 @@ module.exports = {
                     }
                 }
             );
+        });
+    },
+
+    getPublishedItemsByCategory(category) {
+        return new Promise((resolve, reject) => {
+            const publishedItems = items.filter(
+                (item) =>
+                    item.published && String(item.category) === String(category) // Ensure both are strings for comparison
+            );
+            if (publishedItems.length > 0) {
+                resolve(publishedItems);
+            } else {
+                reject("No items found for this category.");
+            }
         });
     },
 };
