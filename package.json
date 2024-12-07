@@ -1,18 +1,22 @@
 {
   "name": "web322-app",
   "version": "1.0.0",
+  "description": "",
   "main": "server.js",
   "scripts": {
-    "build": "echo 'No build necessary'",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
-  "author": "Eric Yakimoff",
+  "author": "WEB322",
   "license": "ISC",
-  "description": "",
   "dependencies": {
-    "express": "^4.21.1",
-    "express-handlebars": "^8.0.1",
-    "strip-js": "^1.2.0"
+    "cloudinary": "^1.37.0",
+    "express": "^4.17.2",
+    "express-handlebars": "^7.0.7",
+    "multer": "^1.4.5-lts.1",
+    "pg": "^8.13.1",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.37.5",
+    "streamifier": "^0.1.1"
   }
 }
