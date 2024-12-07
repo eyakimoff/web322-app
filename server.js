@@ -1,6 +1,6 @@
 /********************************************************************************* 
 
-WEB322 – Assignment 03
+WEB322 – Assignment 05
 I declare that this assignment is my own work in accordance with Seneca
 Academic Policy.  No part of this assignment has been copied manually or 
 electronically from any other source (including 3rd party web sites) or 
@@ -8,10 +8,10 @@ distributed to other students. I acknoledge that violation of this policy
 to any degree results in a ZERO for this assignment and possible failure of
 the course. 
 
-Name:   
-Student ID:   
-Date:  
-Cyclic Web App URL:  
+Name: Eric Yakimoff
+Student ID: 165296237
+Date: 12/07/24
+Vercel Web App URL:  
 GitHub Repository URL:  
 
 ********************************************************************************/
@@ -371,6 +371,7 @@ app.get("/categories/delete/:id", (req, res) => {
             );
         });
 });
+
 app.get("/items/delete/:id", (req, res) => {
     itemData
         .deleteItemById(req.params.id)
