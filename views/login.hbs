@@ -1,0 +1,10 @@
+<div class="container">
+    {{#if errorMessage}}
+        <div class="alert alert-danger"><strong>Error:</strong> {{errorMessage}}</div>
+    {{/if}}
+    <form method="post" action="/login">
+        <input type="text" name="userName" placeholder="User Name" value="{{userName}}" required />
+        <input type="password" name="password" placeholder="Password" required />
+        <button type="submit">Login</button>
+    </form>
+</div>

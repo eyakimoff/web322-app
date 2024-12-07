@@ -1,18 +1,18 @@
-/********************************************************************************* 
+/*********************************************************************************
 
-WEB322 – Assignment 05
+WEB322 – Assignment 06
 I declare that this assignment is my own work in accordance with Seneca
-Academic Policy.  No part of this assignment has been copied manually or 
-electronically from any other source (including 3rd party web sites) or 
+Academic Policy.  No part of this assignment has been copied manually or
+electronically from any other source (including 3rd party web sites) or
 distributed to other students. I acknoledge that violation of this policy
 to any degree results in a ZERO for this assignment and possible failure of
-the course. 
+the course.
 
 Name: Eric Yakimoff
 Student ID: 165296237
 Date: 12/07/24
-Vercel Web App URL:  
-GitHub Repository URL:  
+Vercel Web App URL: https://web322-app-kappa-six.vercel.app/
+GitHub Repository URL: https://github.com/eyakimoff/web322-app
 
 ********************************************************************************/
 
@@ -28,6 +28,11 @@ const streamifier = require("streamifier");
 // AS4, Setup handlebars
 const exphbs = require("express-handlebars");
 const { Console } = require("console");
+
+const clientSessions = require("client-sessions");
+const bcrypt = require("bcryptjs");
+const authData = require("./auth-service");
+const storeData = require("./store-service");
 
 // Configure Cloudinary. This API information is
 // inside of the Cloudinary Dashboard - https://console.cloudinary.com/
@@ -329,10 +334,6 @@ app.get("/shop/:id", async (req, res) => {
     res.render("shop", { data: viewData });
 });
 
-app.use((req, res) => {
-    res.status(404).render("404");
-});
-
 itemData
     .initialize()
     .then(() => {
@@ -381,4 +382,93 @@ app.get("/items/delete/:id", (req, res) => {
         .catch(() => {
             res.status(500).send("Unable to Remove Item / Item not found"); // Error response
         });
+});
+
+authData
+    .initialize()
+    .then(storeData.initialize)
+    .then(() => {
+        app.listen(HTTP_PORT, () => {
+            console.log("App listening on " + HTTP_PORT);
+        });
+    })
+    .catch((err) => {
+        console.log("Unable to start server: " + err);
+    });
+
+app.use(
+    clientSessions({
+        cookieName: "session",
+        secret: "web322_assignment6_secret",
+        duration: 2 * 60 * 1000, // 2 minutes
+        activeDuration: 1000 * 60, // Extend session by 1 minute if active
+    })
+);
+
+app.use((req, res, next) => {
+    res.locals.session = req.session;
+    next();
+});
+
+const ensureLogin = (req, res, next) => {
+    if (!req.session.user) {
+        res.redirect("/login");
+    } else {
+        next();
+    }
+};
+
+app.get("/login", (req, res) => {
+    console.log("Login route accessed");
+    res.render("login");
+});
+
+app.get("/register", (req, res) => {
+    res.render("register");
+});
+
+app.post("/register", (req, res) => {
+    authData
+        .registerUser(req.body)
+        .then(() => res.render("register", { successMessage: "User created" }))
+        .catch((err) =>
+            res.render("register", {
+                errorMessage: err,
+                userName: req.body.userName,
+            })
+        );
+});
+
+app.post("/login", (req, res) => {
+    req.body.userAgent = req.get("User-Agent");
+
+    authData
+        .checkUser(req.body)
+        .then((user) => {
+            req.session.user = {
+                userName: user.userName,
+                email: user.email,
+                loginHistory: user.loginHistory,
+            };
+            res.redirect("/items");
+        })
+        .catch((err) =>
+            res.render("login", {
+                errorMessage: err,
+                userName: req.body.userName,
+            })
+        );
+});
+
+app.get("/logout", (req, res) => {
+    req.session.reset();
+    res.redirect("/");
+});
+
+app.get("/userHistory", ensureLogin, (req, res) => {
+    res.render("userHistory");
+});
+
+app.use((req, res) => {
+    res.status(404).render("404");
 });
